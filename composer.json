@@ -1,0 +1,15 @@
+{
+    "name": "dell/courrier24",
+    "autoload": {
+        "psr-4": {
+            "Dell\\Courrier24\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Lacina Cisse",
+            "email": "elcisse@live.fr"
+        }
+    ],
+    "require": {}
+}
