@@ -1,0 +1,7 @@
+# Activer URL rewriting (si tu fais un routeur plus tard)
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+
+# Sécurité basique
+Options -Indexes
