@@ -1,6 +1,10 @@
-<?php
-// variables: $title, $viewFile
-?>
+
+/<?php if (auth_check()): ?>
+  <span class="navbar-text me-3">👋 <?= e($_SESSION['auth_prenom_nom'] ?? '') ?></span>
+<?php endif; ?>
+<?php if (in_roles(['ADMIN'])): ?>
+    <li class="nav-item"><a class="nav-link" href="<?= url('/services') ?>">🏢 Services</a></li>
+<?php endif; ?>
 <!doctype html>
 <html lang="fr">
 <head>

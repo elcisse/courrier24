@@ -10,21 +10,27 @@ use App\Controllers\AuthController;
 
 /** @var Router $router */
 
-// Publique (login)
 $router->get('/login', AuthController::class.'@login');
 $router->post('/login', AuthController::class.'@doLogin', [
     ['class' => CsrfMiddleware::class, 'method' => 'handle'],
 ]);
 
-// Protégées (auth requise)
-$auth = [ ['class' => AuthMiddleware::class, 'method' => 'handle'] ];
+// Guards (closures) basés sur les rôles
+$guardAdmin = role_guard(['ADMIN']);
+$guardStaff = role_guard(['ADMIN','SECRETAIRE','CHEF_SERVICE','AGENT','LECTEUR']);
 
-$router->get('/', HomeController::class.'@index', $auth);
-$router->get('/courriers', CourrierController::class.'@index', $auth);
-$router->get('/services', ServiceController::class.'@index', $auth);
-$router->get('/utilisateurs', UtilisateurController::class.'@index', $auth);
+// Tableau de bord (tout utilisateur authentifié)
+$router->get('/', HomeController::class.'@index', [ $guardStaff ]);
 
-// Déconnexion (POST + CSRF)
-$router->post('/logout', AuthController::class.'@logout', array_merge($auth, [
-    ['class' => CsrfMiddleware::class, 'method' => 'handle'],
-]));
+// Services — réservé ADMIN
+$router->get('/services', ServiceController::class.'@index', [ $guardAdmin ]);
+$router->get('/services/create', ServiceController::class.'@create', [ $guardAdmin ]);
+$router->post('/services/store', ServiceController::class.'@store', [ $guardAdmin, ['class'=>CsrfMiddleware::class,'method'=>'handle'] ]);
+$router->get('/services/edit', ServiceController::class.'@edit', [ $guardAdmin ]);
+$router->post('/services/update', ServiceController::class.'@update', [ $guardAdmin, ['class'=>CsrfMiddleware::class,'method'=>'handle'] ]);
+$router->post('/services/delete', ServiceController::class.'@destroy', [ $guardAdmin, ['class'=>CsrfMiddleware::class,'method'=>'handle'] ]);
+
+// Courriers — staff
+$router->get('/courriers', CourrierController::class.'@index', [ $guardStaff ]);
+$router->get('/courriers/create', CourrierController::class.'@create', [ $guardStaff ]);
+$router->post('/courriers/store', CourrierController::class.'@store', [ $guardStaff, ['class'=>CsrfMiddleware::class,'method'=>'handle'] ]);
